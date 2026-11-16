@@ -30,13 +30,75 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-    
+<!-- 
+        <joint name="${prefix}elevator_platform_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint> -->
+
+        <joint name="${prefix}elevator_platform_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <!-- <joint name="${prefix}elevator_platform_joint">
+            <command_interface name="position">
+                <param name="min">0.0</param>
+                <param name="max">0.034</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint> -->
+
+        <!-- <joint name="${prefix}elevator_platform_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint> -->
+
+        <!-- <joint name="${prefix}elevator_platform_joint">
+        <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">0.34</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        </joint> -->
+
     </ros2_control>
+
+  <!-- <ros2_control name="elevator_controller" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="${prefix}elevator_platform_joint">
+      <command_interface name="effort">
+      </command_interface>
+      <command_interface name="position">
+         <param name="min">0.0</param>
+         <param name="max">0.034</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+  </ros2_control> -->
 
     <gazebo>
         <plugin filename="gz_ros2_control-system"
                 name="gz_ros2_control::GazeboSimROS2ControlPlugin">
         <parameters>$(find rb1_ros2_description)/config/rb1_controller.yaml</parameters>
+        
+        <position_proportional_gain>100.0</position_proportional_gain>
 
         <ros>
           <remapping>/robot_description:=/rb1_robot/robot_description</remapping>

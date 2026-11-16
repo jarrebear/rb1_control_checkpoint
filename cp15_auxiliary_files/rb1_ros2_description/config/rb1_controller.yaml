@@ -1,12 +1,18 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10  # Hz
+    update_rate: 50  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
     rb1_base_controller:
       type: diff_drive_controller/DiffDriveController
+
+    elevator_controller:
+      type: forward_command_controller/ForwardCommandController
+      # type: velocity_controllers/JointGroupVelocityController
+    #  type: position_controllers/JointGroupPositionController
+      # type: effort_controllers/JointGroupEffortController
 
 rb1_base_controller:
   ros__parameters:
@@ -55,3 +61,9 @@ rb1_base_controller:
     angular.z.min_acceleration: -1.0
     angular.z.max_jerk: 0.0
     angular.z.min_jerk: 0.0
+
+elevator_controller:
+  ros__parameters:
+    joints:
+      - robot_elevator_platform_joint
+    interface_name: effort

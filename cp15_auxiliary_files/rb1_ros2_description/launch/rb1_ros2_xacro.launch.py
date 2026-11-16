@@ -59,7 +59,9 @@ def generate_launch_description():
         namespace=robot_name_1,
         parameters=[{'frame_prefix': robot_name_1 + '/', 'use_sim_time': use_sim_time,
                      'robot_description': ParameterValue(Command(['xacro ', robot_desc_path, ' robot_name:=', robot_name_1]), value_type=str)}],
-        output="screen"
+        output="screen",
+        remappings=[('joint_states', '/joint_states'),
+                ('tf', '/tf'), ('tf_static', '/tf_static')],
     )
 
     # Spawn the Robot #
@@ -93,34 +95,75 @@ def generate_launch_description():
         output="screen",
     )
 
-
-    # Spawn joint state broadcaster
     joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--controller-manager",
-            "/controller_manager"
-        ],
+        package="controller_manager", executable="spawner",
+        arguments=["joint_state_broadcaster",
+                "--controller-manager", "/controller_manager",
+                "--controller-manager-timeout", "60"],
+    )
+    diff_drive_spawner = Node(
+        package="controller_manager", executable="spawner",
+        arguments=["rb1_base_controller",
+                "--controller-manager", "/controller_manager",
+                "--controller-manager-timeout", "60"],
+    )
+    elevator_spawner = Node(
+        package="controller_manager", executable="spawner",
+        arguments=["elevator_controller",
+                "--controller-manager", "/controller_manager",
+                "--controller-manager-timeout", "60"],
     )
 
-    # Spawn differential drive controller
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "rb1_base_controller",
-            "--controller-manager",
-            "/controller_manager"
-        ],
-    )
+    start_jsb = RegisterEventHandler(OnProcessExit(
+        target_action=gz_spawn_entity, on_exit=[joint_state_broadcaster_spawner]))
+    start_controllers = RegisterEventHandler(OnProcessExit(
+        target_action=joint_state_broadcaster_spawner,
+        on_exit=[diff_drive_spawner, elevator_spawner]))
 
     return LaunchDescription([
-        gz_sim,
-        rsp_robot,
-        gz_spawn_entity,
-        gz_bridge,
-        joint_state_broadcaster_spawner,
-        diff_drive_spawner,
+        gz_sim, rsp_robot, gz_spawn_entity, gz_bridge,
+        start_jsb, start_controllers,
     ])
+
+    # # Spawn joint state broadcaster
+    # joint_state_broadcaster_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "joint_state_broadcaster",
+    #         "--controller-manager",
+    #         "/controller_manager"
+    #     ],
+    # )
+
+    # # Spawn differential drive controller
+    # diff_drive_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "rb1_base_controller",
+    #         "--controller-manager",
+    #         "/controller_manager"
+    #     ],
+    # )
+
+    # # Spawn elevator controller
+    # elevator_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "elevator_controller",
+    #         "--controller-manager",
+    #         "/controller_manager"
+    #     ],
+    # )
+
+    # return LaunchDescription([
+    #     gz_sim,
+    #     rsp_robot,
+    #     gz_spawn_entity,
+    #     gz_bridge,
+    #     joint_state_broadcaster_spawner,
+    #     diff_drive_spawner,
+    #     elevator_spawner,
+    # ])
