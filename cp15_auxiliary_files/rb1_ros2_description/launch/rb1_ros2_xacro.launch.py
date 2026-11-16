@@ -93,9 +93,34 @@ def generate_launch_description():
         output="screen",
     )
 
+
+    # Spawn joint state broadcaster
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager"
+        ],
+    )
+
+    # Spawn differential drive controller
+    diff_drive_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "rb1_base_controller",
+            "--controller-manager",
+            "/controller_manager"
+        ],
+    )
+
     return LaunchDescription([
         gz_sim,
         rsp_robot,
         gz_spawn_entity,
-        gz_bridge
+        gz_bridge,
+        joint_state_broadcaster_spawner,
+        diff_drive_spawner,
     ])

@@ -29,6 +29,7 @@ install(
 	urdf
 	xacro
 	worlds
+	config
   DESTINATION
     share/${PROJECT_NAME}/
 )

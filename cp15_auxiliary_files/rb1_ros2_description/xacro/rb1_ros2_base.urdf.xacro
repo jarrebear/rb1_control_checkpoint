@@ -106,6 +106,6 @@
 	</xacro:sensor_hokuyo_ust20lx>
 
 	<!-- Gazebo ros2 control plugins -->
-	<!-- <xacro:ros2_control/> -->
+	<xacro:ros2_control prefix="$(arg prefix)"/>
 
 </robot>
